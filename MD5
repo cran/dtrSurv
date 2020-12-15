@@ -1,4 +1,4 @@
-59852ac65269a56a9df7ca8c5f1bb08f *DESCRIPTION
+9842ba76f3b1cbae83b7c484074c8857 *DESCRIPTION
 7f50bd9304348517aa57a0c6156c1592 *NAMESPACE
 d5d2ab1e87c8e9688a2b67f8d3006e4d *R/VerifyCriticalValue.R
 6fb0253aca5441dde952cc7f7ea74430 *R/VerifyData.R
@@ -36,6 +36,6 @@ c99ef5d01b70565ea5c967dc508f03fc *man/predict.Rd
 e186face137c3ce141cc6b7d3815d0a7 *man/print.Rd
 5c1598ea824fd6a1e7125cbc0ee4c9ab *man/show.Rd
 3269493e4d86bbe38ca24127501f8e2a *man/stage.Rd
-389e860e2159c4419113331b9715b717 *src/dtrSurv.f90
-c08f460361ecf767ec610e7027a5f09a *src/dtrSurv_init.c
+56e27163ba212909940b02e75f44aa3a *src/dtrSurv.f90
+dddd8b96079c8a4fa5edab2f98199586 *src/dtrSurv_init.c
 5a8684d6fcaa0861ddd1177c27db2cbc *src/randoms.c

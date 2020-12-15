@@ -9,8 +9,8 @@
 /* .Fortran calls */
 extern void F77_NAME(gettree)(int *iTree, int *nr, int *nc, double *nodes, double *survFunc, double *mean, double *survProb);
 extern void F77_NAME(predictsurvtree)(int *n, int *np, double *xt, int *nCat, int *nt, int *nNodes, double *tsurvFunc, double *mean, double *survProb, int *nCols, double *tnodes, double *predSurvFunc, double *predMean, double *predSurvProb);
-extern void F77_NAME(setupbasics)(int *t_nt, int *t_dt, int *t_rs, int *t_ERT, int *t_uniformSplit, int *t_nodeSize, int *t_minEvent, int *t_rule, int *t_sIndex, int *t_sFraction, int *t_stratifiedSplit, int *t_replace);
-extern void F77_NAME(setupinners)(int *t_n, int *t_np, int *t_x, int *t_pr, int *t_delta, int *t_mTry, int *t_nCat, int *t_sampleSize, int *t_nTree, int *t_nrNodes);
+extern void F77_NAME(setupbasics)(int *t_nt, double *t_dt, double *t_rs, int *t_ERT, int *t_uniformSplit, int *t_nodeSize, int *t_minEvent, int *t_rule, int *t_sIndex, double *t_sFraction, double *t_stratifiedSplit, int *t_replace);
+extern void F77_NAME(setupinners)(int *t_n, int *t_np, double *t_x, double *t_pr, int *t_delta, int *t_mTry, int *t_nCat, int *t_sampleSize, int *t_nTree, int *t_nrNodes);
 extern void F77_NAME(survtree)(double *tSurvFunc, double *mean, double *survProb);
 extern void F77_NAME(treedim)(int *iTree, int *nr, int *nc);
 

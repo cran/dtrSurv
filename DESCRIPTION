@@ -1,11 +1,11 @@
 Package: dtrSurv
 Type: Package
 Title: Dynamic Treatment Regimes for Survival Analysis
-Version: 1.0
-Date: 2020-12-07
+Version: 1.1
+Date: 2020-12-09
 Author: Shannon T. Holloway, Hunyong Cho
 Maintainer: Shannon T. Holloway <sthollow@ncsu.edu>
-Description: Provides methods for estimating multi-stage optimal dynamic treatment regimes for survival outcomes with dependent censoring.
+Description: Provides methods for estimating multi-stage optimal dynamic treatment regimes for survival outcomes with dependent censoring. Cho, H., Holloway, S. T., and Kosorok, M. R. (2020) <arXiv:2012.03294>.
 License: GPL-2
 NeedsCompilation: yes
 Repository: CRAN
@@ -23,5 +23,5 @@ Collate: 'VerifyCriticalValue.R' 'VerifyData.R' 'VerifyERT.R'
         'class_Parameters.R' 'predictSurvTree.R' 'class_SurvRF.R'
         'survRF.R' 'shiftMat.R' 'class_Optimal.R' 'class_DTRSurvStep.R'
         'class_DTRSurv.R' 'dtrSurv.R'
-Packaged: 2020-12-07 20:03:43 UTC; sthollow
-Date/Publication: 2020-12-09 09:50:03 UTC
+Packaged: 2020-12-09 17:51:01 UTC; sthollow
+Date/Publication: 2020-12-15 22:30:15 UTC

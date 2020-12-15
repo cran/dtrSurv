@@ -111,9 +111,7 @@ FUNCTION sampleWithOutReplace(nCases, n) RESULT(array)
 
   INTEGER, DIMENSION(1:n) :: array
 
-  INTEGER :: i, j, cnt
-
-  REAL(dp) :: u
+  INTEGER :: j, cnt
 
   LOGICAL, DIMENSION(1:nCases) :: used
 
@@ -168,14 +166,14 @@ SUBROUTINE tfindSplit(nCases, casesIn, nv, varsIn, &
   INTEGER :: cnt, i, ikv, j, jj, k, kv, l, nUncensored, ptr, rightNode
   INTEGER :: rUnifSet, set, splitLeft, splitLeftFinal, tieCovariate
   INTEGER :: tieValue, variablesTried
-  INTEGER, DIMENSION(1:nCases) :: cases, cOut, dSorted, indices, ix, tcases
+  INTEGER, DIMENSION(1:nCases) :: cases, dSorted, tcases
   INTEGER, DIMENSION(1:nv) :: variables
   INTEGER, DIMENSION(:), ALLOCATABLE :: ind, indSingles, leftCases, rightCases
   INTEGER, DIMENSION(:), ALLOCATABLE :: uncensoredIndices
 
-  REAL(dp) :: cutoff, maxValueSplit, maxValueXm, rUnif, u, valuej
-  REAL(dp), DIMENSION(1:nt) :: atRiskj, atRiskLeft, atRiskRight, D, denJ, eventj
-  REAL(dp), DIMENSION(1:nt) :: eventsLeft, eventsRight, numJ, pd1, pd2, R, Rcum
+  REAL(dp) :: cutoff, maxValueSplit, maxValueXm, rUnif, valuej
+  REAL(dp), DIMENSION(1:nt) :: atRiskLeft, atRiskRight, D, denJ
+  REAL(dp), DIMENSION(1:nt) :: eventsLeft, eventsRight, numJ, pd1, pd2, Rcum
   REAL(dp), DIMENSION(1:nCases) :: xSorted
   REAL(dp), DIMENSION(:,:), ALLOCATABLE :: prl, prr
 
@@ -426,7 +424,7 @@ SUBROUTINE tfindSplit(nCases, casesIn, nv, varsIn, &
 
       ! calculate test statistic
       IF (rule == 1) THEN
-        CALL logrank(atRiskLeft, atRiskRight, eventsLeft, eventsRight, numJ, &
+        CALL logrank(atRiskLeft, atRiskRight, eventsLeft, numJ, &
                    & denJ, valuej)
       ELSE
         CALL meanSplit(atRiskLeft, atRiskRight, eventsLeft, eventsRight, valuej)
@@ -560,7 +558,7 @@ SUBROUTINE kaplan(ns, nj, oj, z)
 
   INTEGER :: i
 
-  REAL(dp), DIMENSION(1:ns) :: num, on
+  REAL(dp), DIMENSION(1:ns) :: num
 
   num = nj - oj
 
@@ -593,8 +591,6 @@ SUBROUTINE meanSplit(N1j, N2j, O1j, O2j, Z)
   REAL(dp), DIMENSION(1:nt), INTENT(IN) :: O2j
   REAL(dp), INTENT(OUT) :: Z
 
-  INTEGER :: i, m
-
   REAL(dp), DIMENSION(1:nt) :: E1, E2
 
   CALL kaplan(nt, N1j, O1j, E1)
@@ -626,10 +622,7 @@ SUBROUTINE logRankSetUp(N1j, N2j, O1j, O2j, numJ, denJ)
 
   INTEGER :: i
 
-  REAL(dp) :: den, Nj, num, Oj, O1
-  REAL(dp), DIMENSION(1:nt) :: tdenJ, tNj, tnumJ, tOj
-
-  LOGICAL, DIMENSION(1:nt) :: elg
+  REAL(dp) :: Nj, Oj
 
   numJ = 0.d0
   denJ = 0.d0
@@ -661,14 +654,13 @@ END SUBROUTINE logrankSetUp
 ! numJ: real(:), numerator
 ! denJ: real(:), denominator
 ! Z: real, test value
-SUBROUTINE logRank(N1j, N2j, O1j, O2j, numJ, denJ, Z)
+SUBROUTINE logRank(N1j, N2j, O1j, numJ, denJ, Z)
 
   IMPLICIT NONE
 
   REAL(dp), DIMENSION(1:nt), INTENT(IN) :: N1j
   REAL(dp), DIMENSION(1:nt), INTENT(IN) :: N2j
   REAL(dp), DIMENSION(1:nt), INTENT(IN) :: O1j
-  REAL(dp), DIMENSION(1:nt), INTENT(IN) :: O2j
   REAL(dp), DIMENSION(1:nt), INTENT(IN) :: numJ
   REAL(dp), DIMENSION(1:nt), INTENT(IN) :: denJ
   REAL(dp), INTENT(OUT) :: Z
@@ -765,7 +757,7 @@ SUBROUTINE getCovariate(nCases, casesIn, kv, array)
   REAL(dp) :: mean
   REAL(dp), DIMENSION(1:nt) :: survFunc
 
-  LOGICAL, DIMENSION(1:nCases) :: indices, inSubset
+  LOGICAL, DIMENSION(1:nCases) :: inSubset
 
   array = 0.d0
 
@@ -835,7 +827,7 @@ SUBROUTINE tsurvTree(forestSurvFunc, forestMean, forestSurvProb)
   REAL(dp), DIMENSION(1:nAll), INTENT(OUT) :: forestMean
   REAL(dp), DIMENSION(1:nAll), INTENT(OUT) :: forestSurvProb
 
-  INTEGER :: i, iTree, j, k, lft, m, nc, ncur, splitFound, splitVar, stat
+  INTEGER :: i, iTree, j, k, lft, m, nc, ncur, splitFound, splitVar
   INTEGER, DIMENSION(1:sampleSize) :: indices, jdex, xrand
   INTEGER, DIMENSION(1:np) :: newstat, pindices
   INTEGER, DIMENSION(1:np, 1:nrNodes) :: cstat
@@ -852,7 +844,7 @@ SUBROUTINE tsurvTree(forestSurvFunc, forestMean, forestSurvProb)
   REAL(dp), DIMENSION(1:nt, 1:nAll) :: tforestSurvFunc
 
   LOGICAL, DIMENSION(1:np) :: cand
-  LOGICAL, DIMENSION(1:nAll) :: sti, tst
+  LOGICAL, DIMENSION(1:nAll) :: tst
 
   tforestSurvFunc = 0.d0
   forestMean = 0.d0
@@ -1083,7 +1075,15 @@ SUBROUTINE tsurvTree(forestSurvFunc, forestMean, forestSurvProb)
 
   END DO
 
-  forestSurvFunc = reshape(tforestSurvFunc, (/nt*nAll/)) / nTree
+  ! This change is to eliminate a strange lto warning from R
+!  forestSurvFunc = reshape(tforestSurvFunc, (/nt*nAll/)) / nTree
+  j = 0
+  DO i = 1, SIZE(tforestSurvFunc,2)
+    forestSurvFunc(j+1:j+SIZE(tforestSurvFunc,1)) = tforestSurvFunc(:,i)
+    j = j + SIZE(tforestSurvFunc,1)
+  END DO
+
+  forestSurvFunc = forestSurvFunc / nTree
   forestMean = forestMean / nTree
   forestSurvProb = forestSurvProb / nTree
 
@@ -1099,7 +1099,7 @@ SUBROUTINE predict(iTree, nr, nc, newData)
   REAL(dp), DIMENSION(:,:) :: newData
 
   INTEGER :: i, j, m
-  INTEGER, DIMENSION(1:nr) :: ll, stat
+  INTEGER, DIMENSION(1:nr) :: stat
 
   REAL(dp), DIMENSION(1:nr) :: xm
   REAL(dp), DIMENSION(1:nr,1:nc) :: nData
@@ -1197,8 +1197,8 @@ SUBROUTINE predictSurvTree(n, np, xt, nCat, nt, nNodes, tsurvFunc, mean, &
   REAL(dp), DIMENSION(1:n), INTENT(OUT) :: predMean
   REAL(dp), DIMENSION(1:n), INTENT(OUT) :: predSurvProb
 
-  INTEGER :: areTerminal, i, j, m
-  INTEGER, DIMENSION(1:n) :: ll, stat
+  INTEGER :: i, j, m
+  INTEGER, DIMENSION(1:n) :: stat
 
   REAL(dp), DIMENSION(1:n) :: xm
   REAL(dp), DIMENSION(1:nt, 1:n) :: tsurv
@@ -1259,7 +1259,14 @@ SUBROUTINE predictSurvTree(n, np, xt, nCat, nt, nNodes, tsurvFunc, mean, &
 
   ! retrieve appropriate values based on terminal node
   tsurv = survFunc(:,stat)
-  predSurvFunc = reshape(tsurv,(/n*nt/))
+  ! This change is to eliminate a strange lto warning from R
+!  predSurvFunc = reshape(tsurv,(/n*nt/))
+  j = 0
+  DO i = 1, SIZE(tsurv,2)
+    predSurvFunc(j+1:j+SIZE(tsurv,1)) = tsurv(:,i)
+    j = j + SIZE(tsurv,1)
+  END DO
+
   predMean = mean(stat)
   predSurvProb = survProb(stat)
 
@@ -1338,8 +1345,7 @@ END SUBROUTINE setUpBasics
 ! t_sampleSize, integer, the number of cases to sample for each tree
 ! t_ntree, integer, the number of trees in the forest
 ! t_nrNodes, integer, the maximum number of nodes
-SUBROUTINE setUpInners(t_n, t_np, t_x, t_pr, t_delta, t_mTry, t_nCat, &
-                     & t_sampleSize, t_nTree, t_nrNodes)
+SUBROUTINE setUpInners(t_n, t_np, t_x, t_pr, t_delta, t_mTry, t_nCat,  t_sampleSize, t_nTree, t_nrNodes)
 
   USE INNERS
 
@@ -1436,8 +1442,23 @@ SUBROUTINE getTree(iTree, nr, nc, nodes, survFunc, mean, survProb)
   REAL(dp), DIMENSION(1:nr), INTENT(OUT) :: mean
   REAL(dp), DIMENSION(1:nr), INTENT(OUT) :: survProb
 
-  nodes = reshape(trees(iTree)%matrix, (/nr*nc/))
-  survFunc = reshape(trees(iTree)%survFunc, (/nt*nr/))
+  INTEGER :: i, j
+
+  ! This change is to eliminate a strange lto warning from R
+!  nodes = reshape(trees(iTree)%matrix, (/nr*nc/))
+  j = 0
+  DO i = 1, SIZE(trees(iTree)%matrix,2)
+    nodes(j+1:j+SIZE(trees(iTree)%matrix,1)) = trees(iTree)%matrix(:,i)
+    j = j + SIZE(trees(iTree)%matrix,1)
+  END DO
+
+  ! This change is to eliminate a strange lto warning from R
+!  survFunc = reshape(trees(iTree)%survFunc, (/nt*nr/))
+  j = 0
+  DO i = 1, SIZE(trees(iTree)%survFunc,2)
+    survFunc(j+1:j+SIZE(trees(iTree)%survFunc,1)) = trees(iTree)%survFunc(:,i)
+    j = j + SIZE(trees(iTree)%survFunc,1)
+  END DO
   mean = trees(iTree)%mean
   survProb = trees(iTree)%survProb
 
