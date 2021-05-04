@@ -22,8 +22,9 @@ setMethod(f = ".VerifyModels",
             })
 
 #-------------------------------------------------------------------------------
-# method returns a list containing "models", the models for each decision, and 
-# "response", the survival response as a single column matrix
+# method returns a list containing "models", the models for each decision,  
+# "response", the survival response as a single column matrix, and
+# "delta", the event status as a single column matrix
 #-------------------------------------------------------------------------------
 #' @importFrom stats as.formula
 setMethod(f = ".VerifyModels",
@@ -87,7 +88,10 @@ setMethod(f = ".VerifyModels",
               # extract survival response
               resp <- matrix(data = model.response(data = mf)[,1L], ncol = 1L)
 
-              return( list("models" = models, "response" = resp) )
+              # extract event
+              del <- matrix(data = model.response(data = mf)[,2L], ncol = 1L)
+
+              return( list("models" = models, "response" = resp, "delta" = del) )
             })
 
 # internal function identifies element of dataNames that include the provided
@@ -258,8 +262,9 @@ commonFormula <- function(models, ...,
 # each model can be generated from the provided data, and to extract the
 # survival response variables.
 #-------------------------------------------------------------------------------
-# method returns a list containing "models", the unaltered model, and 
-# "response", the survival response as a nDP column matrix
+# method returns a list containing "models", the unaltered model, 
+# "response", the survival response as a nDP column matrix, and
+# "delta", the event status as a nDP column matrix
 #-------------------------------------------------------------------------------
 setMethod(f = ".VerifyModels",
           signature = c(models = "list"),
@@ -273,13 +278,15 @@ setMethod(f = ".VerifyModels",
               # ensure that each element of the list is a formula and extract
               # the response variable
               resp <- NULL
+              del <- NULL
               for (i in 1L:nDP) {
                 tst <- .VerifyModels(models = models[[ i ]], 
                                      nDP = 1L,  
                                      data = data)
                 models[[ i ]] <- tst$models
                 resp <- cbind(resp, tst$resp)
+                del <- cbind(del, tst$del)
               }
 
-              return( list("models" = models, "response" = resp) )
+              return( list("models" = models, "response" = resp, "delta" = del) )
             })

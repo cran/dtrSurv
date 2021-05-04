@@ -1,0 +1,10 @@
+dtrSurv v1.2 (Release date: 2021-05-04)
+==============
+
+Changes:
+
+* Updated documentation and examples for dtrSurv to more clearly indicate
+  stage nature of the response variables
+* Added check to ensure that response variables (k+1:nDP) are zero if delta_k=1
+
+

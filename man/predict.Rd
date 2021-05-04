@@ -22,6 +22,11 @@ value is estimated based on the data provided.}
 all treatment options and that leading to the maximum value for each
 individual is used to estimate the value.}
 }
+\value{
+a list object containing a matrix of the predicted survival function
+  (survFunc), the estimated mean survuval (mean), and the estimated
+  survival probability (if critical value is surv.mean or surv.prob)
+}
 \description{
 Method to estimate the value for new data or to retrieve estimated value for
  training data
@@ -33,6 +38,10 @@ dt <- data.frame("Y.1" = sample(1:100,100,TRUE), "Y.2" = sample(101:200,100,TRUE
                  "D.1" = rbinom(100, 1, 0.9), "D.2" = rbinom(100,1,0.9),
                  "A.1" = rbinom(100, 1, 0.5), "A.2" = rbinom(100,1,0.5),
                  "X.1" = rnorm(100), "X.2" = rnorm(100))
+
+# responses must be zero after event
+evt <- dt[,"D.1"] == 1L
+dt[evt, "Y.2"] <- 0.0
 
 result <- dtrSurv(data = dt, 
                   txName = c("A.1", "A.2"), 

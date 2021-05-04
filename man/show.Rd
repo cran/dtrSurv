@@ -10,6 +10,9 @@
 \arguments{
 \item{object}{A DTRSurv object. The value returned by dtrSurv().}
 }
+\value{
+No return value, called to display key results.
+}
 \description{
 Shows the key results of the analysis.
 }
@@ -20,6 +23,10 @@ dt <- data.frame("Y.1" = sample(1:100,100,TRUE), "Y.2" = sample(101:200,100,TRUE
                  "D.1" = rbinom(100, 1, 0.9), "D.2" = rbinom(100,1,0.9),
                  "A.1" = rbinom(100, 1, 0.5), "A.2" = rbinom(100,1,0.5),
                  "X.1" = rnorm(100), "X.2" = rnorm(100))
+
+# responses must be zero after event
+evt <- dt[,"D.1"] == 1L
+dt[evt, "Y.2"] <- 0.0
 
 result <- dtrSurv(data = dt, 
                   txName = c("A.1", "A.2"), 

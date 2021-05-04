@@ -20,6 +20,8 @@ setClass(Class = "DTRSurv",
 #'
 #' @export
 #' @name print
+#' @aliases print,DTRSurv-method
+#' @returns No return value, called to display key results.
 #' @examples
 #'
 #'
@@ -27,6 +29,10 @@ setClass(Class = "DTRSurv",
 #'                  "D.1" = rbinom(100, 1, 0.9), "D.2" = rbinom(100,1,0.9),
 #'                  "A.1" = rbinom(100, 1, 0.5), "A.2" = rbinom(100,1,0.5),
 #'                  "X.1" = rnorm(100), "X.2" = rnorm(100))
+#'
+#' # responses must be zero after event
+#' evt <- dt[,"D.1"] == 1L
+#' dt[evt, "Y.2"] <- 0.0
 #'
 #' result <- dtrSurv(data = dt, 
 #'                   txName = c("A.1", "A.2"), 
@@ -83,6 +89,8 @@ setMethod(f = "print",
 #'
 #' @export
 #' @name show
+#' @aliases show,DTRSurv-method
+#' @returns No return value, called to display key results.
 #' @examples
 #'
 #'
@@ -90,6 +98,10 @@ setMethod(f = "print",
 #'                  "D.1" = rbinom(100, 1, 0.9), "D.2" = rbinom(100,1,0.9),
 #'                  "A.1" = rbinom(100, 1, 0.5), "A.2" = rbinom(100,1,0.5),
 #'                  "X.1" = rnorm(100), "X.2" = rnorm(100))
+#'
+#' # responses must be zero after event
+#' evt <- dt[,"D.1"] == 1L
+#' dt[evt, "Y.2"] <- 0.0
 #'
 #' result <- dtrSurv(data = dt, 
 #'                   txName = c("A.1", "A.2"), 
@@ -187,6 +199,10 @@ setMethod(f = "stage",
 #'                  "A.1" = rbinom(100, 1, 0.5), "A.2" = rbinom(100,1,0.5),
 #'                  "X.1" = rnorm(100), "X.2" = rnorm(100))
 #'
+#' # responses must be zero after event
+#' evt <- dt[,"D.1"] == 1L
+#' dt[evt, "Y.2"] <- 0.0
+#'
 #' result <- dtrSurv(data = dt, 
 #'                   txName = c("A.1", "A.2"), 
 #'                   models = list(Surv(Y.1,D.1)~X.1+A.1, 
@@ -231,6 +247,10 @@ setMethod(f = "stage",
 #'
 #' @export
 #' @name predict
+#' @aliases predict,DTRSurv-method
+#' @returns a list object containing a matrix of the predicted survival function
+#'   (survFunc), the estimated mean survuval (mean), and the estimated
+#'   survival probability (if critical value is surv.mean or surv.prob)
 #' @examples
 #'
 #'
@@ -238,6 +258,10 @@ setMethod(f = "stage",
 #'                  "D.1" = rbinom(100, 1, 0.9), "D.2" = rbinom(100,1,0.9),
 #'                  "A.1" = rbinom(100, 1, 0.5), "A.2" = rbinom(100,1,0.5),
 #'                  "X.1" = rnorm(100), "X.2" = rnorm(100))
+#'
+#' # responses must be zero after event
+#' evt <- dt[,"D.1"] == 1L
+#' dt[evt, "Y.2"] <- 0.0
 #'
 #' result <- dtrSurv(data = dt, 
 #'                   txName = c("A.1", "A.2"), 

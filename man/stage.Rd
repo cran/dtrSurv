@@ -33,6 +33,10 @@ dt <- data.frame("Y.1" = sample(1:100,100,TRUE), "Y.2" = sample(101:200,100,TRUE
                  "A.1" = rbinom(100, 1, 0.5), "A.2" = rbinom(100,1,0.5),
                  "X.1" = rnorm(100), "X.2" = rnorm(100))
 
+# responses must be zero after event
+evt <- dt[,"D.1"] == 1L
+dt[evt, "Y.2"] <- 0.0
+
 result <- dtrSurv(data = dt, 
                   txName = c("A.1", "A.2"), 
                   models = list(Surv(Y.1,D.1)~X.1+A.1, 
