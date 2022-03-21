@@ -7,4 +7,10 @@ Changes:
   stage nature of the response variables
 * Added check to ensure that response variables (k+1:nDP) are zero if delta_k=1
 
+dtrSurv v1.3 (Release date: 2022-03-18)
+==============
+
+Changes:
+
+* Removed check to ensure that response variables (k+1:nDP) are zero if delta_k=1
 

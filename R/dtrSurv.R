@@ -22,20 +22,20 @@
 #'   'models' = Surv(Y,d) ~ X1 + X2 + A would lead to 
 #'   Surv(Y.1,d.1) ~ X1 + X2 + A.1 as the first stage model; and 
 #'   Surv(Y.2,d.2) ~ X1 + X2 + A.2 
-#'   as the second stage. 
-#'
+#'   as the second stage.
+#'   
 #'   Y.k is the length of Stage k so that (Y.1 + Y.2 + ... + Y.K) is the 
 #'   overall observed failure time, d.k is the censoring status at Stage k, 
+#'   d.k = 0 if a subject was censored at Stage k, and 1 if he/she experienced 
+#'   failure during that stage or moved to Stage k+1.
 #'   A.k is the treatment at Stage k, k=1,2,..., K. Note that every quantity 
-#'   here is a stage-wide quantity. In other words, Y.2 is the length of Stage 2 
-#'   and is not cumulative from the baseline. d.1 is 1 only if a subject 
-#'   experiences failure during that stage, and 0 if he/she was censored 
-#'   at Stage 1 or moved to Stage 2.
+#'   here is stage-wide. In other words, Y.2 is the length of Stage 2 
+#'   and is not cumulative from the baseline.   
 #'   
 #'   When one experienced censoring or failure at Stage k, it should be that
-#'   Y.j = 0 for all j > k and instantaneous failure (Y.k < 1e-8) is not allowed 
-#'   E.g., when d.(k-1) = 0 and Y.k = 0, the person is considered censored at 
-#'   Stage k-1, but when d.(k-1) = 0 and Y.k = 2, the person made it to Stage k
+#'   Y.j = 0 for all j > k and instantaneous failure (Y.k < 1e-8) is not allowed; 
+#'   E.g., when d.(k-1) = 1 and Y.k = 0, the person is considered died at 
+#'   Stage k-1, but when d.(k-1) = 1 and Y.k = 2, the person made it to Stage k
 #'   and either experienced failure or censoring (depending on d.k) during Stage k.
 #'   
 #'   Any subject with missing values at Stage k will be ignored.
@@ -173,6 +173,10 @@
 #'   should be accessed through convenience functions stage(), show(), print(),
 #'   and predict().
 #'
+#' @seealso \code{\link{predict}} for retrieving the optimal treatment 
+#'    and/or the optimal survival curves. \code{\link{stage}} for retrieving stage 
+#'    results as a list. \code{\link{show}} for presenting the analysis results.
+#'
 #' @examples
 #'
 #'
@@ -180,10 +184,6 @@
 #'                  "D.1" = rbinom(100, 1, 0.9), "D.2" = rbinom(100,1,0.9),
 #'                  "A.1" = rbinom(100, 1, 0.5), "A.2" = rbinom(100,1,0.5),
 #'                  "X.1" = rnorm(100), "X.2" = rnorm(100))
-#'
-#' # responses must be zero after event
-#' evt <- dt[,"D.1"] == 1L
-#' dt[evt, "Y.2"] <- 0.0
 #'
 #' dtrSurv(data = dt, 
 #'         txName = c("A.1", "A.2"), 
@@ -208,10 +208,6 @@
 #'                  "D.1" = rbinom(100, 1, 0.9), "D.2" = rbinom(100,1,0.9),
 #'                  "A.1" = rbinom(100, 1, 0.5), "A.2" = rbinom(100,1,0.5),
 #'                  "X1" = rnorm(100), "X2" = rnorm(100))
-#'
-#' # responses must be zero after event
-#' evt <- dt[,"D.1"] == 1L
-#' dt[evt, "Y.2"] <- 0.0
 #'
 #' # common formula with only baseline covariates
 #' dtrSurv(data = dt, 
@@ -300,23 +296,6 @@ dtrSurv <- function(data,
   response <- models$response
   del <- models$delta
   models <- models$models
-
-  # Ensure that responses are zero after event
-  if (ncol(x = del) > 1L) {
-    for (i in 1L:ncol(x = del)) {
-      evt <- del[,i] > 0.5
-      j <- i + 1L
-      while (j <= ncol(x = response)) {
-        if (any(abs(response[evt,j]) > 1e-8)) {
-          stop("for ", sum(abs(response[evt,j]) > 1e-8), 
-               " participant(s), delta = 1 at stage ", i, 
-               "; non-zero stage response found in stage ", j,
-               call. = FALSE)
-        }
-        j <- j + 1L
-      }
-    }
-  }
 
   # convert to list for single decision analyses for convenience
   if (!is.list(x = models)) models <- list(models)

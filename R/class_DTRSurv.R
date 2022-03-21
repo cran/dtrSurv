@@ -30,10 +30,6 @@ setClass(Class = "DTRSurv",
 #'                  "A.1" = rbinom(100, 1, 0.5), "A.2" = rbinom(100,1,0.5),
 #'                  "X.1" = rnorm(100), "X.2" = rnorm(100))
 #'
-#' # responses must be zero after event
-#' evt <- dt[,"D.1"] == 1L
-#' dt[evt, "Y.2"] <- 0.0
-#'
 #' result <- dtrSurv(data = dt, 
 #'                   txName = c("A.1", "A.2"), 
 #'                   models = list(Surv(Y.1,D.1)~X.1+A.1, 
@@ -98,10 +94,6 @@ setMethod(f = "print",
 #'                  "D.1" = rbinom(100, 1, 0.9), "D.2" = rbinom(100,1,0.9),
 #'                  "A.1" = rbinom(100, 1, 0.5), "A.2" = rbinom(100,1,0.5),
 #'                  "X.1" = rnorm(100), "X.2" = rnorm(100))
-#'
-#' # responses must be zero after event
-#' evt <- dt[,"D.1"] == 1L
-#' dt[evt, "Y.2"] <- 0.0
 #'
 #' result <- dtrSurv(data = dt, 
 #'                   txName = c("A.1", "A.2"), 
@@ -199,10 +191,6 @@ setMethod(f = "stage",
 #'                  "A.1" = rbinom(100, 1, 0.5), "A.2" = rbinom(100,1,0.5),
 #'                  "X.1" = rnorm(100), "X.2" = rnorm(100))
 #'
-#' # responses must be zero after event
-#' evt <- dt[,"D.1"] == 1L
-#' dt[evt, "Y.2"] <- 0.0
-#'
 #' result <- dtrSurv(data = dt, 
 #'                   txName = c("A.1", "A.2"), 
 #'                   models = list(Surv(Y.1,D.1)~X.1+A.1, 
@@ -258,10 +246,6 @@ setMethod(f = "stage",
 #'                  "D.1" = rbinom(100, 1, 0.9), "D.2" = rbinom(100,1,0.9),
 #'                  "A.1" = rbinom(100, 1, 0.5), "A.2" = rbinom(100,1,0.5),
 #'                  "X.1" = rnorm(100), "X.2" = rnorm(100))
-#'
-#' # responses must be zero after event
-#' evt <- dt[,"D.1"] == 1L
-#' dt[evt, "Y.2"] <- 0.0
 #'
 #' result <- dtrSurv(data = dt, 
 #'                   txName = c("A.1", "A.2"), 
